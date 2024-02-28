@@ -1,0 +1,2532 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Johann Tailor">
+
+<title>Class_14_RNA_seq_mini_project</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Class_14_mini_project_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Class_14_mini_project_files/libs/quarto-html/quarto.js"></script>
+<script src="Class_14_mini_project_files/libs/quarto-html/popper.min.js"></script>
+<script src="Class_14_mini_project_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Class_14_mini_project_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Class_14_mini_project_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Class_14_mini_project_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Class_14_mini_project_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Class_14_mini_project_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Class_14_mini_project_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Class_14_RNA_seq_mini_project</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Johann Tailor </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="data-import-and-reading" class="level1">
+<h1>Data Import and Reading</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DESeq2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: S4Vectors</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: stats4</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: BiocGenerics</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'BiocGenerics'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    IQR, mad, sd, var, xtabs</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'S4Vectors'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:utils':
+
+    findMatches</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    expand.grid, I, unname</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: IRanges</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: GenomicRanges</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: GenomeInfoDb</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: SummarizedExperiment</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: MatrixGenerics</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: matrixStats</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'MatrixGenerics'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:matrixStats':
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Biobase</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'Biobase'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:MatrixGenerics':
+
+    rowMedians</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:matrixStats':
+
+    anyMissing, rowMedians</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>metaFile <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"GSE37704_metadata.csv"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>countFile <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"GSE37704_featurecounts.csv"</span>, <span class="at">row.names =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-exploration" class="level1">
+<h1>Data Exploration</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(metaFile)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         id     condition
+1 SRR493366 control_sirna
+2 SRR493367 control_sirna
+3 SRR493368 control_sirna
+4 SRR493369      hoxa1_kd
+5 SRR493370      hoxa1_kd
+6 SRR493371      hoxa1_kd</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(countFile)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                length SRR493366 SRR493367 SRR493368 SRR493369 SRR493370
+ENSG00000186092    918         0         0         0         0         0
+ENSG00000279928    718         0         0         0         0         0
+ENSG00000279457   1982        23        28        29        29        28
+ENSG00000278566    939         0         0         0         0         0
+ENSG00000273547    939         0         0         0         0         0
+ENSG00000187634   3214       124       123       205       207       212
+                SRR493371
+ENSG00000186092         0
+ENSG00000279928         0
+ENSG00000279457        46
+ENSG00000278566         0
+ENSG00000273547         0
+ENSG00000187634       258</code></pre>
+</div>
+</div>
+</section>
+<section id="check-for-similarity-between-column-names" class="level1">
+<h1>Check for similarity between column names:</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(countFile)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "length"    "SRR493366" "SRR493367" "SRR493368" "SRR493369" "SRR493370"
+[7] "SRR493371"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(metaFile)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         id     condition
+1 SRR493366 control_sirna
+2 SRR493367 control_sirna
+3 SRR493368 control_sirna
+4 SRR493369      hoxa1_kd
+5 SRR493370      hoxa1_kd
+6 SRR493371      hoxa1_kd</code></pre>
+</div>
+</div>
+<section id="filter-our-the-zeros" class="level2">
+<h2 class="anchored" data-anchor-id="filter-our-the-zeros">Filter our the zeros</h2>
+<p>removing the length column</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>countdata <span class="ot">&lt;-</span> countFile[,<span class="sc">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Checking for the sample exactness</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Using == to check if they are perfectly same</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(countdata) <span class="sc">==</span> metaFile<span class="sc">$</span>id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+</div>
+</div>
+<p>Some genes have no values, so we want to get rid of it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Only select for values which have a sum greater than 0 for each row/gene:</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>non.zero.inds <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(countdata) <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Looks for that in all the rows/genes:</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>non.zero.counts <span class="ot">&lt;-</span> countdata[non.zero.inds,]</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(non.zero.counts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                SRR493366 SRR493367 SRR493368 SRR493369 SRR493370 SRR493371
+ENSG00000279457        23        28        29        29        28        46
+ENSG00000187634       124       123       205       207       212       258
+ENSG00000188976      1637      1831      2383      1226      1326      1504
+ENSG00000187961       120       153       180       236       255       357
+ENSG00000187583        24        48        65        44        48        64
+ENSG00000187642         4         9        16        14        16        16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(countdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                SRR493366 SRR493367 SRR493368 SRR493369 SRR493370 SRR493371
+ENSG00000186092         0         0         0         0         0         0
+ENSG00000279928         0         0         0         0         0         0
+ENSG00000279457        23        28        29        29        28        46
+ENSG00000278566         0         0         0         0         0         0
+ENSG00000273547         0         0         0         0         0         0
+ENSG00000187634       124       123       205       207       212       258</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="setup-for-deseq" class="level1">
+<h1>Setup for DESeq</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DESeq2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>#DESeq analysis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeqDataSetFromMatrix</span>(<span class="at">countData =</span> non.zero.counts,</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">colData =</span> metaFile,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">design =</span> <span class="sc">~</span>condition)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in DESeqDataSet(se, design = design, ignoreRank): some variables in
+design formula are characters, converting to factors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeq</span>(dds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>estimating size factors</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>estimating dispersions</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>gene-wise dispersion estimates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>mean-dispersion relationship</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>final dispersion estimates</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>fitting model and testing</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">results</span>(dds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): condition hoxa1 kd vs control sirna 
+Wald test p-value: condition hoxa1 kd vs control sirna 
+DataFrame with 6 rows and 6 columns
+                 baseMean log2FoldChange     lfcSE       stat      pvalue
+                &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;
+ENSG00000279457   29.9136      0.1792571 0.3248216   0.551863 5.81042e-01
+ENSG00000187634  183.2296      0.4264571 0.1402658   3.040350 2.36304e-03
+ENSG00000188976 1651.1881     -0.6927205 0.0548465 -12.630158 1.43989e-36
+ENSG00000187961  209.6379      0.7297556 0.1318599   5.534326 3.12428e-08
+ENSG00000187583   47.2551      0.0405765 0.2718928   0.149237 8.81366e-01
+ENSG00000187642   11.9798      0.5428105 0.5215599   1.040744 2.97994e-01
+                       padj
+                  &lt;numeric&gt;
+ENSG00000279457 6.86555e-01
+ENSG00000187634 5.15718e-03
+ENSG00000188976 1.76549e-35
+ENSG00000187961 1.13413e-07
+ENSG00000187583 9.19031e-01
+ENSG00000187642 4.03379e-01</code></pre>
+</div>
+</div>
+<p>##Making the Volcano Plot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res<span class="sc">$</span>log2FoldChange, <span class="sc">-</span><span class="fu">log</span>(res<span class="sc">$</span>padj),</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"-log(P-value)"</span>,</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"log2(Fold-Change)"</span>)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">2</span>, <span class="at">col=</span> <span class="st">"red"</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="sc">-</span><span class="dv">2</span>, <span class="at">col=</span> <span class="st">"red"</span>)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="sc">-</span><span class="fu">log</span>(<span class="fl">0.05</span>), <span class="at">col=</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Class_14_mini_project_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can also use ggplot but first we have to make it as a data frame:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>res_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Color all points gray:</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>mycols <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">"gray"</span>, <span class="fu">nrow</span>(res_df))</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Setting limits:</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>mycols</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    [1] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [11] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [21] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [31] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [41] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [51] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [61] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [71] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [81] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+   [91] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+  [991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [1991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [2991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [3991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [4991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [5991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [6991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [7991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [8991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+ [9991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[10991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[11991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[12991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[13991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14971] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14981] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[14991] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15001] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15011] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15021] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15031] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15041] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15051] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15061] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15071] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15081] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15091] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15101] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15111] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15121] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15131] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15141] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15151] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15161] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15171] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15181] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15191] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15201] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15211] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15221] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15231] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15241] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15251] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15261] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15271] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15281] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15291] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15301] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15311] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15321] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15331] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15341] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15351] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15361] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15371] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15381] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15391] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15401] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15411] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15421] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15431] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15441] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15451] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15461] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15471] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15481] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15491] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15501] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15511] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15521] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15531] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15541] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15551] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15561] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15571] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15581] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15591] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15601] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15611] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15621] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15631] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15641] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15651] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15661] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15671] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15681] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15691] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15701] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15711] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15721] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15731] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15741] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15751] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15761] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15771] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15781] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15791] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15801] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15811] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15821] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15831] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15841] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15851] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15861] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15871] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15881] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15891] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15901] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15911] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15921] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15931] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15941] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15951] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15961] "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray" "gray"
+[15971] "gray" "gray" "gray" "gray" "gray"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(res_df, <span class="fu">aes</span>(<span class="at">x =</span> log2FoldChange, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log</span>(padj))) <span class="sc">+</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1237 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Class_14_mini_project_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="annotating-the-genes" class="level2">
+<h2 class="anchored" data-anchor-id="annotating-the-genes">Annotating the genes</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(AnnotationDbi)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(org.Hs.eg.db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+</div>
+<p>Let’s see the databases that we can translate between</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">columns</span>(org.Hs.eg.db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "ACCNUM"       "ALIAS"        "ENSEMBL"      "ENSEMBLPROT"  "ENSEMBLTRANS"
+ [6] "ENTREZID"     "ENZYME"       "EVIDENCE"     "EVIDENCEALL"  "GENENAME"    
+[11] "GENETYPE"     "GO"           "GOALL"        "IPI"          "MAP"         
+[16] "OMIM"         "ONTOLOGY"     "ONTOLOGYALL"  "PATH"         "PFAM"        
+[21] "PMID"         "PROSITE"      "REFSEQ"       "SYMBOL"       "UCSCKG"      
+[26] "UNIPROT"     </code></pre>
+</div>
+</div>
+<p>Let’s try to use different datbases and translate the IDs:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>res_df<span class="sc">$</span>symbol <span class="ot">&lt;-</span> <span class="fu">mapIds</span>(org.Hs.eg.db,</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">keys =</span> <span class="fu">row.names</span>(res_df),</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">keytype =</span> <span class="st">"ENSEMBL"</span>,</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">column =</span> <span class="st">"SYMBOL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>'select()' returned 1:many mapping between keys and columns</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>res_df<span class="sc">$</span>entrez <span class="ot">&lt;-</span> <span class="fu">mapIds</span>(org.Hs.eg.db,</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">keys =</span> <span class="fu">row.names</span>(res_df),</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">keytype =</span> <span class="st">"ENSEMBL"</span>,</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">column =</span> <span class="st">"ENTREZID"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>'select()' returned 1:many mapping between keys and columns</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res_df<span class="sc">$</span>entrez)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA       "148398" "26155"  "339451" "84069"  "84808" </code></pre>
+</div>
+</div>
+<p>#Result extraction</p>
+</section>
+</section>
+<section id="kegg-and-go-analysis" class="level1">
+<h1>KEGG and GO analysis</h1>
+<p>BiocManager::install( c(“pathview”, “gage”, “gageData”))</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gage)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gageData)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pathview)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>foldchanges <span class="ot">&lt;-</span> res_df<span class="sc">$</span>log2FoldChange</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(foldchanges) <span class="ot">&lt;-</span> res_df<span class="sc">$</span>entrez</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(foldchanges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       &lt;NA&gt;      148398       26155      339451       84069       84808 
+ 0.17925708  0.42645712 -0.69272046  0.72975561  0.04057653  0.54281049 </code></pre>
+</div>
+</div>
+</section>
+<section id="pathway-analysis" class="level1">
+<h1>Pathway Analysis</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gage)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gageData)</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(kegg.sets.hs)</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(sigmet.idx.hs)</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on signaling and metabolic pathways only</span></span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>kegg.sets.hs <span class="ot">=</span> kegg.sets.hs[sigmet.idx.hs]</span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Examine the first 3 pathways</span></span>
+<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(kegg.sets.hs, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`hsa00232 Caffeine metabolism`
+[1] "10"   "1544" "1548" "1549" "1553" "7498" "9"   
+
+$`hsa00983 Drug metabolism - other enzymes`
+ [1] "10"     "1066"   "10720"  "10941"  "151531" "1548"   "1549"   "1551"  
+ [9] "1553"   "1576"   "1577"   "1806"   "1807"   "1890"   "221223" "2990"  
+[17] "3251"   "3614"   "3615"   "3704"   "51733"  "54490"  "54575"  "54576" 
+[25] "54577"  "54578"  "54579"  "54600"  "54657"  "54658"  "54659"  "54963" 
+[33] "574537" "64816"  "7083"   "7084"   "7172"   "7363"   "7364"   "7365"  
+[41] "7366"   "7367"   "7371"   "7372"   "7378"   "7498"   "79799"  "83549" 
+[49] "8824"   "8833"   "9"      "978"   
+
+$`hsa00230 Purine metabolism`
+  [1] "100"    "10201"  "10606"  "10621"  "10622"  "10623"  "107"    "10714" 
+  [9] "108"    "10846"  "109"    "111"    "11128"  "11164"  "112"    "113"   
+ [17] "114"    "115"    "122481" "122622" "124583" "132"    "158"    "159"   
+ [25] "1633"   "171568" "1716"   "196883" "203"    "204"    "205"    "221823"
+ [33] "2272"   "22978"  "23649"  "246721" "25885"  "2618"   "26289"  "270"   
+ [41] "271"    "27115"  "272"    "2766"   "2977"   "2982"   "2983"   "2984"  
+ [49] "2986"   "2987"   "29922"  "3000"   "30833"  "30834"  "318"    "3251"  
+ [57] "353"    "3614"   "3615"   "3704"   "377841" "471"    "4830"   "4831"  
+ [65] "4832"   "4833"   "4860"   "4881"   "4882"   "4907"   "50484"  "50940" 
+ [73] "51082"  "51251"  "51292"  "5136"   "5137"   "5138"   "5139"   "5140"  
+ [81] "5141"   "5142"   "5143"   "5144"   "5145"   "5146"   "5147"   "5148"  
+ [89] "5149"   "5150"   "5151"   "5152"   "5153"   "5158"   "5167"   "5169"  
+ [97] "51728"  "5198"   "5236"   "5313"   "5315"   "53343"  "54107"  "5422"  
+[105] "5424"   "5425"   "5426"   "5427"   "5430"   "5431"   "5432"   "5433"  
+[113] "5434"   "5435"   "5436"   "5437"   "5438"   "5439"   "5440"   "5441"  
+[121] "5471"   "548644" "55276"  "5557"   "5558"   "55703"  "55811"  "55821" 
+[129] "5631"   "5634"   "56655"  "56953"  "56985"  "57804"  "58497"  "6240"  
+[137] "6241"   "64425"  "646625" "654364" "661"    "7498"   "8382"   "84172" 
+[145] "84265"  "84284"  "84618"  "8622"   "8654"   "87178"  "8833"   "9060"  
+[153] "9061"   "93034"  "953"    "9533"   "954"    "955"    "956"    "957"   
+[161] "9583"   "9615"  </code></pre>
+</div>
+</div>
+<p>Let’s look at what is inside:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>foldchanges <span class="ot">=</span> res<span class="sc">$</span>log2FoldChange</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(foldchanges) <span class="ot">=</span> res<span class="sc">$</span>entrez</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(foldchanges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  0.17925708  0.42645712 -0.69272046  0.72975561  0.04057653  0.54281049</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the results</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>keggres <span class="ot">=</span> <span class="fu">gage</span>(foldchanges, <span class="at">gsets=</span>kegg.sets.hs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(keggres<span class="sc">$</span>less)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                         p.geomean stat.mean p.val q.val
+hsa00232 Caffeine metabolism                    NA       NaN    NA    NA
+hsa00983 Drug metabolism - other enzymes        NA       NaN    NA    NA
+hsa00230 Purine metabolism                      NA       NaN    NA    NA
+hsa04514 Cell adhesion molecules (CAMs)         NA       NaN    NA    NA
+hsa04010 MAPK signaling pathway                 NA       NaN    NA    NA
+hsa04012 ErbB signaling pathway                 NA       NaN    NA    NA
+                                         set.size exp1
+hsa00232 Caffeine metabolism                    0   NA
+hsa00983 Drug metabolism - other enzymes        0   NA
+hsa00230 Purine metabolism                      0   NA
+hsa04514 Cell adhesion molecules (CAMs)         0   NA
+hsa04010 MAPK signaling pathway                 0   NA
+hsa04012 ErbB signaling pathway                 0   NA</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pathview)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pathview</span>(<span class="at">gene.data=</span>foldchanges, <span class="at">pathway.id=</span><span class="st">"hsa04110"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: None of the genes or compounds mapped to the pathway!
+Argument gene.idtype or cpd.idtype may be wrong.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>'select()' returned 1:1 mapping between keys and columns</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Info: Working in directory /Users/johanntailor/Desktop/UCSD Courses/Winter 2024/Bioinformatics/R_directory/Class_14_mini_project_022324/Class_14_mini_project</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Info: Writing image file hsa04110.pathview.png</code></pre>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="hsa04110.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Cell cycle pathway from KEGG</figcaption>
+</figure>
+</div>
+</section>
+<section id="gene-ontology-go" class="level1">
+<h1>Gene Ontology (GO)</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(go.sets.hs)</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(go.subs.hs)</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on Biological Process subset of GO</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>gobpsets <span class="ot">=</span> go.sets.hs[go.subs.hs<span class="sc">$</span>BP]</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>gobpres <span class="ot">=</span> <span class="fu">gage</span>(foldchanges, <span class="at">gsets=</span>gobpsets, <span class="at">same.dir=</span><span class="cn">TRUE</span>)</span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(gobpres, head)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$greater
+                                               p.geomean stat.mean p.val q.val
+GO:0000002 mitochondrial genome maintenance           NA       NaN    NA    NA
+GO:0000003 reproduction                               NA       NaN    NA    NA
+GO:0000012 single strand break repair                 NA       NaN    NA    NA
+GO:0000018 regulation of DNA recombination            NA       NaN    NA    NA
+GO:0000019 regulation of mitotic recombination        NA       NaN    NA    NA
+GO:0000022 mitotic spindle elongation                 NA       NaN    NA    NA
+                                               set.size exp1
+GO:0000002 mitochondrial genome maintenance           0   NA
+GO:0000003 reproduction                               0   NA
+GO:0000012 single strand break repair                 0   NA
+GO:0000018 regulation of DNA recombination            0   NA
+GO:0000019 regulation of mitotic recombination        0   NA
+GO:0000022 mitotic spindle elongation                 0   NA
+
+$less
+                                               p.geomean stat.mean p.val q.val
+GO:0000002 mitochondrial genome maintenance           NA       NaN    NA    NA
+GO:0000003 reproduction                               NA       NaN    NA    NA
+GO:0000012 single strand break repair                 NA       NaN    NA    NA
+GO:0000018 regulation of DNA recombination            NA       NaN    NA    NA
+GO:0000019 regulation of mitotic recombination        NA       NaN    NA    NA
+GO:0000022 mitotic spindle elongation                 NA       NaN    NA    NA
+                                               set.size exp1
+GO:0000002 mitochondrial genome maintenance           0   NA
+GO:0000003 reproduction                               0   NA
+GO:0000012 single strand break repair                 0   NA
+GO:0000018 regulation of DNA recombination            0   NA
+GO:0000019 regulation of mitotic recombination        0   NA
+GO:0000022 mitotic spindle elongation                 0   NA
+
+$stats
+                                               stat.mean exp1
+GO:0000002 mitochondrial genome maintenance          NaN   NA
+GO:0000003 reproduction                              NaN   NA
+GO:0000012 single strand break repair                NaN   NA
+GO:0000018 regulation of DNA recombination           NaN   NA
+GO:0000019 regulation of mitotic recombination       NaN   NA
+GO:0000022 mitotic spindle elongation                NaN   NA</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gobpres<span class="sc">$</span>less)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                               p.geomean stat.mean p.val q.val
+GO:0000002 mitochondrial genome maintenance           NA       NaN    NA    NA
+GO:0000003 reproduction                               NA       NaN    NA    NA
+GO:0000012 single strand break repair                 NA       NaN    NA    NA
+GO:0000018 regulation of DNA recombination            NA       NaN    NA    NA
+GO:0000019 regulation of mitotic recombination        NA       NaN    NA    NA
+GO:0000022 mitotic spindle elongation                 NA       NaN    NA    NA
+                                               set.size exp1
+GO:0000002 mitochondrial genome maintenance           0   NA
+GO:0000003 reproduction                               0   NA
+GO:0000012 single strand break repair                 0   NA
+GO:0000018 regulation of DNA recombination            0   NA
+GO:0000019 regulation of mitotic recombination        0   NA
+GO:0000022 mitotic spindle elongation                 0   NA</code></pre>
+</div>
+</div>
+</section>
+<section id="reactome-analysis" class="level1">
+<h1>Reactome Analysis</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Pick all genes with fold change greater than 2</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Checks two things at once:</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> (<span class="fu">abs</span>(res_df<span class="sc">$</span>log2FoldChange) <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">&amp;</span> (<span class="fu">abs</span>(res_df<span class="sc">$</span>padj) <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>my_genes <span class="ot">&lt;-</span> res_df<span class="sc">$</span>symbol[indices]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">head</span>(my_genes), <span class="at">sep =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>HES4
+HES2
+DRAXIN
+CDA
+RUNX3
+AUNIP</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(my_genes, <span class="at">file=</span><span class="st">"my_genes.txt"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Added the file to</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="R-HSA-12582.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Cell cycle pathway from KEGG</figcaption>
+</figure>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(res, <span class="at">file=</span><span class="st">"res_df"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,294 @@
+---
+title: "Class_07_Clustering_013124"
+author: "Johann Tailor"
+format: pdf
+editor: visual
+---
+
+
+## Clustering
+
+Today we will learn about machine learning and how to use the function
+`kmeans()`
+
+
+# Kmeans clustering
+
+Let's see how it works:
+
+This gives random numbers or n; Its a way to make up random data:
+```{r}
+rnorm(10)
+```
+
+```{r}
+hist( rnorm(50000))
+
+# mean will be 0 and sd is 1. This is the deafult. 
+# check the input available
+
+```
+
+Make a little vector with 60 total points that re centered at +3 and half that are at -3.
+
+```{r}
+
+tmp <- c(rnorm(30, mean=3), rnorm(30, mean=-3))
+tmp
+
+
+```
+Let's allign it so that it goes -ve to +ve and make a plot to visually see two different clusters.
+
+```{r}
+rev.tmp <- rev(tmp)
+
+
+x <- cbind(x=tmp, y=rev.tmp)
+x
+
+plot(x)
+```
+
+Let's run the `kmeans()` feature to see how many clusters are there:
+
+
+```{r}
+k <- kmeans(x, centers = 2, nstart=20)
+k
+
+#the result tells a lot of data.
+```
+What's in this result object??
+```{r}
+attributes(k)
+```
+To get in-depth data about the clusters:
+```{r}
+k$centers
+
+```
+
+>Q. Plot your data `x` showing your clustering result and the center point of each cluster.
+
+
+```{r}
+k <- kmeans(x, centers = 2, nstart=20)
+
+plot(x, col=(k$cluster))
+points(k$centers, pch=15, col="green")
+
+
+```
+>Q. Run kmeans and cluster into 3 groups and plot the results.
+
+```{r}
+k2 <- kmeans(x, centers = 3)
+k2
+
+plot(x, col=k2$cluster)
+```
+
+
+Lets look at something:
+
+Larger number of clusters 
+```{r}
+k$tot.withinss
+k2$tot.withinss
+```
+
+The big limitation to kmeans() is that it **imposes structure on your data** that you ask for in the first place. 
+
+# Hierarchical clustering
+
+`hclust()` wont work with just the data, if you put it. The data needs to come from `dist()` (a distance matrix).
+
+```{r}
+d <- dist(x)
+hc <- hclust(d)
+
+hc
+```
+
+hc by itself doesn't give you much information so we use a new plot. Like this:
+
+```{r}
+plot(hc)
+abline(h=9, col="red")
+```
+
+Let's now get the cluster membership vector we need to cut the tree at a given height we choose to seperate out some clusters. The function to do this calls for `cutree()`. 
+
+
+
+```{r}
+grps <- cutree(hc, h=9)
+grps
+
+plot(grps)
+
+# You can use cluster (specify the no. of clusters) or by height (h).
+```
+
+>Q. Plot the results of data (x) and color our hclust.
+
+```{r}
+
+plot(x, col=grps)
+
+```
+
+# Principal Component Analysis
+
+We will start with PCA of a tiny dataset from UK gov.
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url, row.names = 1)
+
+x
+```
+One useful plot from the lab :
+
+> Q1. How many rows and columns are in your new data frame named x? What R functions could you use to answer this questions?
+
+Answer:17 rows and 4 columns. `dim(x)` can be used as shown below.
+
+**NOTE: for this answer, I already removed the first column X that showed the food macros. 
+
+```{r}
+dim(x)
+```
+
+
+
+> Q2. Which approach to solving the ‘row-names problem’ mentioned above do you prefer and why? Is one approach more robust than another under certain circumstances?
+
+Answer: I like the option where I put the argument when I am reading the file such as: `x <- read.csv(url, row.names = 1)`.
+I think this is an easy way compared to the other one where I have to assign multiple variables. 
+
+
+
+```{r}
+barplot(as.matrix(x), beside=T, col=rainbow(nrow(x)))
+
+```
+>Q3.Changing what optional argument in the above barplot() function results in the following plot?
+
+Answer: change the arguement for `beside()` to F as shown below:
+
+```{r}
+barplot(as.matrix(x), beside=F, col=rainbow(nrow(x)))
+```
+
+>Q5: Generating all pairwise plots may help somewhat. Can you make sense of the following code and resulting figure? What does it mean if a given point lies on the diagonal for a given plot?
+
+Answer: If points lie on the diagnols it means that the consumption of that food catergory is ideally same for the countries on x and y axis. In other words, the values of the variables are identical for countries. 
+
+```{r}
+ pairs(x, col=rainbow(10), pch=16)
+
+# But this also doesnt give you much data
+```
+
+> Q6. What is the main differences between N. Ireland and the other countries of the UK in terms of this data-set?
+
+Answer: They consume the highest fresh potatoes compared to other countries. 
+
+
+## Enter PCA
+
+The main fucntion to do PCA in "base" R is called `prcomp()`
+
+It wants our foods as the column and the countries as the rows.so we transpose it using `t()`.
+
+```{r}
+pca <- prcomp( t(x))
+summary(pca)
+```
+
+```{r}
+attributes(pca)
+```
+
+> Q7. Complete the code below to generate a plot of PC1 vs PC2. The second line adds text labels over the data points.
+
+> Q8. Customize your plot so that the colors of the country names match the colors in our UK and Ireland map and table at start of this document.
+
+Answer as shown on the plots:
+**note: I have added color to the points on the graph.
+
+```{r}
+pca$x
+
+plot(pca$x[,1], pca$x[,2], xlab = "PC1 67.4%", ylab = "PC229%", col=c("orange", "red", "blue", "darkblue", pch=15))
+text(pca$x[,1], pca$x[,2], colnames(x))
+
+abline(h=0, col="gray", lty=2)
+abline(v=0, col="gray", lty=2)
+```
+
+## Variable Loading
+
+```{r}
+v <- round( pca$sdev^2/sum(pca$sdev^2) * 100 )
+v
+```
+
+```{r}
+z <- summary(pca)
+z$importance
+```
+Plotting it:
+```{r}
+barplot(v, xlab="Principal Component", ylab="Percent Variation")
+
+```
+** Note: PC1 and PC2 account for the most variance in the data set. Therefore, they can be used to make the graphs.
+
+```{r}
+par(mar=c(10, 3, 0.35, 0))
+barplot( pca$rotation[,1], las=2 )
+
+
+```
+> Q9: Generate a similar ‘loadings plot’ for PC2. What two food groups feature prominantely and what does PC2 maninly tell us about?
+
+
+Answer: Soft drinks as shown by positive relation in the graph below.
+
+
+```{r}
+par(mar=c(10, 3, 0.35, 0))
+barplot( pca$rotation[,2], las=2 )
+```
+
+
+## using ggplot
+
+```{r}
+library(ggplot2)
+
+df <- as.data.frame(pca$x)
+df_lab <- tibble::rownames_to_column(df, "Country")
+
+# Our first basic plot
+ggplot(df_lab) + 
+  aes(PC1, PC2, col=Country) + 
+  geom_point()
+```
+```{r}
+biplot(pca)
+```
+
+> Q10: How many genes and samples are in this data set?
+
+I think this question was covered on the other day.
+Answer: 100 genes
+```{r}
+url2 <- "https://tinyurl.com/expression-CSV"
+rna.data <- read.csv(url2, row.names=1)
+head(rna.data)
+```
+

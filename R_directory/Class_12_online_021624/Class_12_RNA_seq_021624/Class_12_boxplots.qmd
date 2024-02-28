@@ -1,0 +1,83 @@
+---
+title: "Class_12_RNA_seq_021624"
+author: "Johann Tailor"
+format: pdf
+editor: visual
+---
+
+
+Reading the sample summary file into R:
+
+```{r}
+expression_file <- read.table("https://bioboot.github.io/bggn213_W24/class-material/rs8067378_ENSG00000172057.6.txt")
+
+
+#Finding the summary of the file loaded:
+summary(expression_file)
+
+```
+
+Identifying how many patients are there in each genotype category:
+```{r}
+All_AG <- grep("A/G", expression_file$geno)
+All_GG <- grep("G/G", expression_file$geno)
+All_AA <- grep("A/A", expression_file$geno)
+
+All_AG
+
+
+
+
+
+#A/G_patients <- row.names(df[All_AG, ])
+```
+Another way:
+
+Trying codes to figure it out how to get row.names from the grepED files.
+```{r}
+matching_AG <- rownames(expression_file)[grep("A/G", expression_file$geno)]
+matching_GG <- rownames(expression_file)[grep("G/G", expression_file$geno)]
+matching_AA <- rownames(expression_file)[grep("A/A", expression_file$geno)]
+
+matching_GG
+matching_AA
+matching_AG
+```
+
+> Q13: Read this file into R and determine the sample size for each genotype and their
+corresponding median expression levels for each of these genotypes.
+
+Here are the median for each genotype:
+```{r}
+summary(expression_file[expression_file[,2] == "A/A",3] )
+summary(expression_file[expression_file[,2] == "G/G",3] )
+summary(expression_file[expression_file[,2] == "A/G",3] )
+
+
+```
+ANSWER:
+
+Median for each genotype is as follows
+
+
+A/A : 31.25
+G/G : 20.074
+A/G : 25.065
+
+>Q14: Generate a boxplot with a box per genotype, what could you infer from the relative
+expression value between A/A and G/G displayed in this plot? Does the SNP effect the
+expression of ORMDL3?
+
+Let's generate a box plot to compare the means of the three genotypes and their expression of ORMDL3 gene:
+
+```{r}
+
+
+box_plot_genotypes <- boxplot(exp~geno, data=expression_file, xlab="rs8067378 genotype", ylab="ENSG00000172057.4 (RPKM)")
+
+box_plot_genotypes
+```
+
+ANSWER:
+
+I do think the SNP G|G renders overall less gene expression of ORMDL3 compared to A|A; the mean of A|A is 31.82 and G|G is 20.5, respectively. 

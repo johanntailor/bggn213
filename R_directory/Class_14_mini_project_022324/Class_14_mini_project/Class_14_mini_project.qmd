@@ -1,0 +1,302 @@
+---
+title: "Class_14_RNA_seq_mini_project"
+author: "Johann Tailor"
+format: pdf
+editor: visual
+---
+
+
+# Data Import and Reading
+
+```{r}
+library(DESeq2)
+
+```
+
+```{r importing data}
+
+metaFile <- read.csv("GSE37704_metadata.csv")
+countFile <- read.csv("GSE37704_featurecounts.csv", row.names = 1)
+
+```
+
+
+
+# Data Exploration
+
+
+```{r}
+head(metaFile)
+head(countFile)
+```
+
+# Check for similarity between column names:
+
+```{r}
+colnames(countFile)
+
+head(metaFile)
+
+```
+
+
+
+## Filter our the zeros
+
+removing the length column
+```{r}
+countdata <- countFile[,-1]
+```
+
+
+Checking for the sample exactness
+
+```{r}
+#Using == to check if they are perfectly same
+colnames(countdata) == metaFile$id
+```
+
+
+Some genes have no values, so we want to get rid of it. 
+
+```{r}
+
+#Only select for values which have a sum greater than 0 for each row/gene:
+non.zero.inds <- rowSums(countdata) > 0
+
+#Looks for that in all the rows/genes:
+non.zero.counts <- countdata[non.zero.inds,]
+
+head(non.zero.counts)
+head(countdata)
+
+```
+
+
+# Setup for DESeq
+
+```{r}
+#| message: false
+
+library(DESeq2)
+```
+
+
+#DESeq analysis
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = non.zero.counts,
+                       colData = metaFile,
+                       design = ~condition)
+
+dds <- DESeq(dds)
+res <- results(dds)
+```
+
+```{r}
+head(res)
+```
+
+
+##Making the Volcano Plot:
+
+```{r}
+
+plot(res$log2FoldChange, -log(res$padj),
+     ylab="-log(P-value)",
+     xlab="log2(Fold-Change)")
+abline(v=2, col= "red")
+abline(v=-2, col= "red")
+abline(h=-log(0.05), col= "red")
+
+```
+
+We can also use ggplot but first we have to make it as a data frame:
+
+```{r}
+
+res_df <- as.data.frame(res)
+
+```
+
+
+
+```{r}
+library(ggplot2)
+
+#Color all points gray:
+mycols <- rep("gray", nrow(res_df))
+
+#Setting limits:
+mycols
+
+
+
+
+ggplot(res_df, aes(x = log2FoldChange, y = -log(padj))) +
+  geom_point()
+
+```
+
+
+## Annotating the genes
+```{r}
+
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+
+```
+
+Let's see the databases that we can translate between
+```{r}
+columns(org.Hs.eg.db)
+```
+
+Let's try to use different datbases and translate the IDs:
+
+```{r}
+res_df$symbol <- mapIds(org.Hs.eg.db,
+             keys = row.names(res_df),
+             keytype = "ENSEMBL",
+             column = "SYMBOL")
+
+
+
+res_df$entrez <- mapIds(org.Hs.eg.db,
+             keys = row.names(res_df),
+             keytype = "ENSEMBL",
+             column = "ENTREZID")
+
+
+
+```
+
+
+```{r}
+head(res_df$entrez)
+```
+
+#Result extraction
+
+
+# KEGG and GO analysis
+
+BiocManager::install( c("pathview", "gage", "gageData"))
+
+```{r}
+#| message = FALSE
+library(gage)
+library(gageData)
+library(pathview)
+```
+
+
+```{r}
+foldchanges <- res_df$log2FoldChange
+names(foldchanges) <- res_df$entrez
+head(foldchanges)
+```
+
+
+# Pathway Analysis
+
+```{r}
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+# Focus on signaling and metabolic pathways only
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+
+# Examine the first 3 pathways
+head(kegg.sets.hs, 3)
+```
+
+
+Let's look at what is inside:
+
+```{r}
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+
+
+```{r}
+# Get the results
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+```
+
+
+```{r}
+head(keggres$less)
+
+```
+
+```{r}
+library(pathview)
+pathview(gene.data=foldchanges, pathway.id="hsa04110")
+```
+
+![Cell cycle pathway from KEGG](hsa04110.png)
+
+
+
+# Gene Ontology (GO)
+
+```{r}
+data(go.sets.hs)
+data(go.subs.hs)
+
+# Focus on Biological Process subset of GO
+gobpsets = go.sets.hs[go.subs.hs$BP]
+
+gobpres = gage(foldchanges, gsets=gobpsets, same.dir=TRUE)
+
+lapply(gobpres, head)
+```
+
+```{r}
+head(gobpres$less)
+```
+
+
+
+# Reactome Analysis
+
+```{r}
+
+#Pick all genes with fold change greater than 2
+
+#Checks two things at once:
+
+indices <- (abs(res_df$log2FoldChange) > 2) & (abs(res_df$padj) < 0.05)
+
+my_genes <- res_df$symbol[indices]
+
+```
+
+
+```{r}
+cat(head(my_genes), sep = "\n")
+```
+
+```{r}
+write.table(my_genes, file="my_genes.txt", quote = FALSE, row.names = FALSE, col.names = F)
+```
+
+
+Added the file to
+
+![Cell cycle pathway from KEGG](R-HSA-162582.png)
+
+
+```{r}
+write.csv(res, file="res_df")
+```
+
+
+
+

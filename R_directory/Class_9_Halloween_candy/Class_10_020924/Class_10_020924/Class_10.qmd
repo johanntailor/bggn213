@@ -1,0 +1,225 @@
+---
+title: "Class_10_020924"
+author: "Johann Tailor"
+format: pdf
+editor: visual
+---
+
+# Whats in the PDB?
+
+Downloaded a CSV file from PDB
+Link: http://rcsb.org/stats/summary
+
+```{r}
+pdbstats <- read.csv("pdb_stats.csv", row.names = 1)
+head(pdbstats)
+```
+```{r}
+as.numeric(pdbstats$X.ray)
+```
+```{r}
+# we want to remove all commas in the data so that its not characters anymore:
+
+#x <- "2,2222,22"
+
+#gsub(",", "xoxoxoxooxox",x)
+#gsub(",", "",x)
+#as.numeric(gsub(",", "",x))
+
+
+#now we want to sum everything for the purpose of this 
+comma_sum <- function(x) {
+  sum(as.numeric(gsub(",", "",x)))
+}
+
+
+#go to code > Extract function > make your function
+
+```
+
+```{r}
+
+comma_sum(pdbstats$X.ray)
+comma_sum(pdbstats$Total)
+
+comma_sum(pdbstats["Protein (only)","Total"])
+```
+
+```{r}
+#applying to the whole table 
+
+head(pdbstats)
+
+apply(pdbstats, 2, comma_sum) / comma_sum(pdbstats$Total)
+
+
+```
+```{r}
+# I want to round it up now:
+round(apply(pdbstats, 2, comma_sum) / comma_sum(pdbstats$Total)*100,2)
+```
+
+
+>Q1: What percentage of structures in the PDB are solved by X-Ray and Electron Microscopy.
+
+ANSWER:
+X.ray: 84.54%
+EM: 8.72%
+
+>Q2: What proportion of structures in the PDB are protein?
+
+```{r}
+#pdbstats$Total["Protein (only)", ]
+
+#pdbstats[pdbstats$Total == "Protein (only)", "Total"]
+
+# Assuming pdbstats is the data frame containing information about structures in the PDB
+# Access the value for "Protein (only)" from the "Total" column
+#protein_only_count <- pdbstats[pdbstats$Total == "Other", "Total"]
+
+#protein_only_count
+
+# Calculate the proportion of protein structures
+#proportion_protein <- protein_only_count / sum((pdbstats$Total)
+
+# Print the proportion
+#print(proportion_protein)
+
+Protein_proportion <- (comma_sum(pdbstats["Protein (only)","Total"]) / comma_sum(pdbstats$Total))*100
+
+Protein_proportion
+
+
+
+```
+
+ANSWER: 86.65%
+
+
+
+>Q3: Type HIV in the PDB website search box on the home page and determine how many HIV-1 protease structures are in the current PDB?
+
+```{r}
+library(rentrez)
+
+#search and retrieve HIV-1 proteases
+search_result <- entrez_search(db = "structure", term = "HIV-1 protease", retmax = 10000)
+
+#Count
+HIV1_Count <- search_result$count
+
+# Print the count of HIV-1 protease structures in the PDB
+HIV1_Count
+
+```
+
+ANSWER=1065
+
+
+![](1HSG.png) 
+
+
+
+
+![A nice display showing the homodimeric inhibitor with the Asp25 higlighted](1HSG_asp25.png)
+
+
+# Working with structures in R
+
+We will use the package bio3d for structural bioinformatics.
+
+```{r}
+library(bio3d)
+
+hiv <- read.pdb("1hsg")
+hiv
+```
+
+```{r}
+head(hiv$atom)
+
+aa123(pdbseq(hiv)[25])
+```
+
+# Predicting functional motions of a single structure
+
+```{r}
+adk <- read.pdb("6s36")
+adk
+
+```
+
+
+## Normal Mode Analysis (NMA) a tool to predict motions and large-scale structure changes
+
+```{r}
+m <- nma(adk)
+plot(m)
+```
+Let's make a movie (a.k.a "trajectory)
+
+```{r}
+
+#To view a “movie” of these predicted motions we can generate a molecular “trajectory” with the mktrj() function.
+
+mktrj(m, file="adk_m7.pdb")
+```
+
+# Quick comparative analysis of structures
+
+Workflow:
+
+1-PDB seq is in adk
+2-Get seq
+3-BLAST against PDB
+4-Download all the hits
+5-Superpose all structures from the blast hit
+
+
+```{r}
+s <- pdbseq(adk)
+blast <- blast.pdb(s)
+plot(blast)
+```
+```{r}
+hits <- plot(blast)
+```
+```{r}
+#this will give us all the accession numbers of the 17 hits that matched the protein sequence. 
+
+hits$pdb.id
+```
+
+But, lets automate this process using a string of code:
+
+```{r}
+# Download releated PDB files in a "pdbs" folder
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+
+```{r}
+# Align releated PDBs using MSA and putting structures on top of each other. 
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+## PCA of structures
+
+```{r}
+pc.xray <- pca(pdbs)
+plot(pc.xray)
+```
+Let's make a trajectory:
+```{r}
+mktrj(pc.xray, file="pca_movie.pdb")
+```
+
+Here is the final image:
+
+![A overlapping figure of the ADK](ADK_M7.PDB.png)
+
+
+
+
+
+
+

@@ -1,0 +1,222 @@
+---
+title: "Writing_Function_Class_06"
+author: "Johann Tailor"
+format: pdf
+date: 01/06/24
+editor: visual
+---
+
+
+# Our first simple functions:
+
+All functions have three parts:
+
+- A name
+- Input arguments (none, one or more)
+- A body
+
+A function to add a number:
+
+Here: (x, y) is the data input and {x + y} is the function
+```{r sillyadd 1}
+sillyadd <- function(x, y) { x + y }
+  
+```
+
+Let me try out this function
+
+```{r}
+sillyadd(100, 100)
+```
+
+I added both codes into one:
+
+```{r Sillyadd 2}
+sillyadd <- function(x, y=1) { x + y }
+sillyadd(100)
+  
+```
+
+# Let's do some other activities:
+
+Solve the following:
+
+# Question 1:
+> Q1: Write a function grade() to determine an overall grade from a vector of student homework assignment scores dropping the lowest single score. If a student misses a homework (i.e. has an NA value) this can be used as a score to be potentially dropped. Your final function should be adquately explained with code comments and be able to work on an example class gradebook such as this one in CSV format: “https://tinyurl.com/gradeinput” [3pts]
+
+
+Find average for each student **after dropping the lowest score**:
+
+student1 <- c(100, 100, 100, 100, 100, 100, 100, 90)
+student2 <- c(100, NA, 90, 90, 90, 90, 97, 80)
+student3 <- c(90, NA, NA, NA, NA, NA, NA, NA)
+
+# The following is my work:
+
+**My codes:**
+
+```{r}
+student1 <- c(100, 100, 100, 100, 100, 100, 100, 90)
+student2 <- c(100, NA, 90, 90, 90, 90, 97, 80)
+student3 <- c(90, NA, NA, NA, NA, NA, NA, NA)
+
+sorted_grade <- sort(student1)
+
+all_students <- data.frame(student1, student2, student3)
+
+all_students
+
+
+```
+
+
+This is for student 1:
+```{r}
+student1 <- c(100, 100, 100, 100, 100, 100, 100, 90)
+student2 <- c(100, NA, 90, 90, 90, 90, 97, 80)
+student3 <- c(90, NA, NA, NA, NA, NA, NA, NA)
+
+which.min(student1)
+#tells where is the lowest score:
+student1[-8]
+lowest_dropped <- student1[-8]
+#mean after dropping the lowest one:
+mean(lowest_dropped)
+
+```
+
+Let's see if it works for student 2
+
+I had to add the na.rm to remove:
+```{r}
+student1 <- c(100, 100, 100, 100, 100, 100, 100, 90)
+student2 <- c(100, NA, 90, 90, 90, 90, 97, 80)
+student3 <- c(90, NA, NA, NA, NA, NA, NA, NA)
+
+which.min(student2)
+#tells where is the lowest score:
+student2[-8]
+lowest_dropped <- student2[-8]
+#mean after dropping the lowest one:
+mean(lowest_dropped, na.rm = TRUE)
+
+```
+
+
+Let's see if it works for student 3
+
+I had to add the na.rm to remove NA values:
+```{r}
+student1 <- c(100, 100, 100, 100, 100, 100, 100, 90)
+student2 <- c(100, NA, 90, 90, 90, 90, 97, 80)
+student3 <- c(90, NA, NA, NA, NA, NA, NA, NA)
+
+which.min(student3)
+#tells where is the lowest score:
+student3[-8]
+lowest_dropped <- student3[-8]
+#mean after dropping the lowest one:
+mean(lowest_dropped, na.rm = TRUE)
+
+```
+
+Find and replace the Na values with zero:
+
+```{r}
+#simple function:
+ x <- student3
+x
+is.na(x)
+
+x[is.na(x)] <- 0
+x
+
+
+```
+
+```{r}
+x <- student2
+
+x[is.na(x)] <- 0
+mean(x[-which.min(x)])
+```
+
+Converting it into a function:
+
+# Answer to QUESTION 1:
+
+```{r}
+grade <- function (x) {
+  x[is.na(x)] <- 0
+  mean(x[-which.min(x)])}
+
+
+grade(student3)
+```
+
+Now, lets use this to analyze a data set:
+
+Read the following file: https://tinyurl.com/gradeinput
+
+```{r}
+url <- "https://tinyurl.com/gradeinput"
+gradebook <- read.csv(url, row.names = 1)
+```
+
+Now, lets use the function we generated to analyze the gradebook
+
+```{r}
+
+#we can "apply" our new 'grade()' function over the rows and coloumns with Margins
+apply(gradebook, 1, grade)
+
+results <- apply(gradebook, 1, grade)
+```
+
+# Question 2:
+> Q2: Using your grade() function and the supplied gradebook, Who is the top scoring student overall in the gradebook? [3pts]
+
+# Answer to QUESTION 2:
+```{r}
+which.max(results)
+```
+Answer 2: Student-18
+
+
+# Question 3:
+> From your analysis of the gradebook, which homework was toughest on students (i.e. obtained the lowest scores overall? [2pts]
+
+# Answer to QUESTION 3:
+For the apply function, here are some parameters:
+
+Margin 1 = Rows
+Margin 2 = Col
+```{r}
+apply(gradebook, 2, mean, na.rm = T)
+which.min(apply(gradebook, 2, mean, na.rm = T))
+```
+
+Answer 3: Homework 3
+
+Let's see how well we are teaching the class by looking at the correlation of overall grades and assignments:
+
+# Question 4:
+
+> From your analysis of the gradebook, which homework was most
+predictive of overall score (i.e. highest correlation with average grade score)? [1pt]
+
+# Answer to QUESTION 4:
+```{r}
+mask <- gradebook
+mask[is.na(mask)] <- 0
+mask
+
+cor(mask$hw5, results)
+
+#apply the function to whole dataframe:
+
+apply(mask, 2, cor, y=results)
+
+```
+
+Answer 4: Homework 5

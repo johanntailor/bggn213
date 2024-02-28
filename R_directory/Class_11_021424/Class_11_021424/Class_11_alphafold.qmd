@@ -1,0 +1,101 @@
+---
+title: "Class_11_021424"
+author: "Johann Tailor"
+format: pdf
+editor: visual
+---
+
+# ALL ABOUT ALPHAFOLD
+
+Link to lab: https://bioboot.github.io/bggn213_W24/class-material/class11_alphafold.html#generating-your-own-structure-predictions
+
+To run it, use the GPU notebook to avoid using space on your laptop using the AlphaFold notebooks. There are many other notebooks available: https://github.com/sokrypton/ColabFold
+
+# Goal: Find conserved sites by finding convserved AA and the regions using molstar.
+
+
+```{r}
+pth <- "HIV1dimer_23119"
+
+list.files(path=pth)
+```
+
+Returning the full file name (i.e with the directory path) of the alignment file (a3m).
+
+```{r}
+list.files(path=pth, pattern = ".a3m", full.names = TRUE)
+
+aln.file <- list.files(path=pth, pattern = ".a3m", full.names = TRUE)
+```
+
+```{r}
+library(bio3d)
+aln <- read.fasta(aln.file, to.upper = TRUE)
+```
+
+
+![Aligned protein structure of HIV-1 envelope](HIV1_94B5B_overlapped.png)
+
+Let's look at the alignment. 
+```{r}
+dim(aln$ali)
+```
+
+Let's get some summary of the alignment such as conservation scores.
+
+```{r}
+sim <- conserv(aln)
+head(sim)
+```
+
+The sim file will have scores per column:
+
+```{r}
+plot(sim, typ="h")
+```
+
+We can summarize these conserved columns (the ones with high scores above) via a consensus sequences. 
+
+In the result below, AA DTGA are the most conserved (with a threshold of 90%)
+
+```{r}
+consensus(aln, cutoff = 0.9)
+```
+
+
+We will now read the Predicted Alignment Error (PAE) files to make sense of the multichains. These are stored as JSON format.
+
+```{r}
+library(jsonlite)
+
+pae_files <- list.files(path=pth,
+                        pattern= "000.json",
+                        full.names = TRUE)
+
+pae1 <- read_json(pae_files[1],simplifyVector = TRUE)
+pae5 <- read_json(pae_files[5],simplifyVector = TRUE)
+```
+
+
+Get an idea of the structure of the data:
+
+```{r}
+dim(pae1$pae)
+```
+
+Let's plot this distance matrix:
+
+```{r}
+plot.dmat(pae5$pae)
+```
+```{r}
+plot.dmat(pae1$pae)
+```
+```{r}
+
+```
+
+![An overlapping image of all structures](Overlapping.png)
+
+
+

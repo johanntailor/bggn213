@@ -1,0 +1,19 @@
+---
+title: "Halloween Candy Project Class"
+author: "Johann Tailor"
+format: html
+editor: visual
+---
+
+# Reading the file
+
+```{r}
+candy_file <- "candy-data.csv"
+
+candy = read.csv(candy_file, row.names=1)
+
+head(candy)
+
+
+```
+wisc.df <- read.csv(url("https://bioboot.github.io/bimm143_S20/class-material/WisconsinCancer.csv"), row.names = 1)

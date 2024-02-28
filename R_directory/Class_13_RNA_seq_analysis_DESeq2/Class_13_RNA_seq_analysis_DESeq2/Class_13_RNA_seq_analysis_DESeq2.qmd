@@ -1,0 +1,276 @@
+---
+title: "Class_13_RNA_seq_analysis_DESeq2"
+author: "Johann Tailor"
+format: pdf
+editor: visual
+---
+
+# Section 1 and 2
+
+We will first set up the environment for performing RNA Seq Analysis:
+
+install.packages("BiocManager") BiocManager::install()
+
+# For this class we will need DESeq2:
+
+BiocManager::install("DESeq2")
+
+```{r}
+library("DESeq2")
+library("BiocManager")
+```
+
+# Section 3
+
+Reading the data into R:
+
+```{r}
+counts <- read.csv("airway_scaledcounts.csv", row.names=1)
+metadata <-  read.csv("airway_metadata.csv")
+```
+
+Let's look at the data:
+
+```{r}
+head(counts)
+dim(counts)
+```
+
+```{r}
+head(metadata)
+```
+
+> Questions: Q1. How many genes are in this dataset? Answer: 38694 genes are present in count dataset.
+
+```{r}
+nrow(counts)
+```
+
+> Q2. How many samples? Answer: 8 samples are present
+
+```{r}
+ncol(counts)
+
+```
+
+> Q2. How many ‘control’ cell lines do we have?
+
+```{r}
+table(metadata$dex)
+
+
+# == looks for that particular pattern
+sum(metadata$dex == "control")
+```
+
+Back check to see if all your controls are the same samples:
+
+```{r}
+colnames(counts)
+metadata$id
+
+#Using == to check if they are perfectly same
+colnames(counts) == metadata$id
+```
+
+# Section 4:
+
+Our plan: - First extract the controls (that is the columns) - Calculate the row wise mean (mean of counts for each gene)
+
+
+Answer 3 and 4:
+
+```{r}
+#Where are the control samples
+
+#accessing the columns
+control.inds <- metadata$dex == "control"
+control.counts <- counts[,control.inds]
+control.mean <- apply(control.counts, 1, mean)
+
+
+```
+
+
+```{r}
+
+#Where are the treated samples
+
+#accessing the columns
+treated.inds <- metadata$dex == "treated"
+treated.counts <- counts[,treated.inds]
+
+#getting means for each treated sample for each gene:
+treated.mean <- apply(treated.counts, 1, mean)
+
+
+```
+
+Store these together:
+
+```{r}
+meancounts <- data.frame(control.mean, treated.mean)
+
+
+```
+
+```{r}
+plot(meancounts)
+```
+Answer 5: If we were to do this in ggplot, we would use geom_point()
+
+As it looks, our data is skewed the left and need to transformed for better resolution. To do this, we can use log scaling in the plot.
+
+Answer 6: log = "xy"
+
+```{r}
+plot(meancounts, log = "xy")
+```
+
+Lets determine the fold change now:
+
+Fold change = Treated / Control
+
+We will use log2 fold changes for our treated/control:
+
+```{r}
+
+#the $log2fc adds another column to the meancounts dataset
+meancounts$log2fc <- log2(meancounts$treated.mean/meancounts$control.mean)
+
+head(meancounts)
+```
+
+There are some 0.00 in treated.mean and control.mean which means that those genes are not affected. We want to remove these from the data set. How can we identify zero count genes in our 'meancounts'
+
+```{r}
+#meancounts[,1:2] == "0"
+
+#head(rowSums(meancounts[,1:2] == 0 )
+
+#Only taking 1 and 2 column that has the means:
+
+zero.sums <- rowSums(meancounts[,1:2] == 0)
+to.rm.ind <- zero.sums > 0
+mycounts <- meancounts[!to.rm.ind,]
+
+
+```
+
+Let's see how many genes are present:
+
+```{r}
+nrow(mycounts)
+```
+
+
+Answers: 8, 9 and 10
+
+A common threshold for calling something "DE" is a log2 fold change of +2 and -2. So, lets how check how many of our genes are "up-regulated".
+
+Upregulated genes:
+
+```{r}
+sum(mycounts$log2fc >= +2)
+```
+
+Downregulated genes:
+
+```{r}
+sum(mycounts$log2fc <= -2)
+```
+
+Answer 10: I don't trust these results because I don't know if they are significant.
+
+Lets do this correct way;
+
+```{r}
+#| message: false
+
+library(DESeq2)
+```
+
+DESeq2 wants our data in a particular object called a deseq object and we can set this up within the DESeqpackage.
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = counts,
+                       colData = metadata,
+                       design =~dex)
+```
+
+The main analysis function is called 'DESeq()' and we can now input our data:
+
+```{r}
+dds <- DESeq(dds)
+```
+
+To get the results our of the 'dds' we use the 'DESeq' function called 'results()'.
+
+```{r}
+res <- results(dds)
+head(res)
+```
+
+## Volcano plot
+
+A common visualization for this type of data is called a Volcano plot:
+
+```{r}
+plot(res$log2FoldChange, -log(res$padj),
+     ylab="-log(P-value)",
+     xlab="log2(Fold-Change)")
+abline(v=2, col= "red")
+abline(v=-2, col= "red")
+abline(h=-log(0.05), col= "red")
+
+```
+
+Saving our DESeq2 results:
+
+```{r}
+write.csv(res, file="myresults.csv")
+```
+
+# Adding annotation to Ensemble IDs
+
+You may have to install these with the BiocManager::install("AnnotationDbi") and BiocManager::install("org.Hs.eg.db") function calls.
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+```
+
+```{r}
+columns(org.Hs.eg.db)
+
+```
+
+
+Answer 11:
+
+```{r}
+res$symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(res), # Our genenames
+                     keytype="ENSEMBL",        # The format of our genenames
+                     column="SYMBOL",          # The new format we want to add
+                     multiVals="first")
+```
+
+Now, lets also annotate with the EntrezID and save it as a new column
+
+```{r}
+res$entrez <- mapIds(org.Hs.eg.db,
+                     keys=row.names(res), # Our genenames
+                     keytype="ENSEMBL",        # The format of our genenames
+                     column="ENTREZID",          # The new format we want to add
+                     multiVals="first")
+```
+
+```{r}
+head(res)
+```
+
+```{r}
+  
+write.csv(res, file="myresults_annotated.csv")
+```
